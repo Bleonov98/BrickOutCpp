@@ -38,52 +38,81 @@ void MyMortar::MoveMyMortar()
 	}
 }
 
-void Brick::brickHit()
+void MyMortar::DeathMortar()
 {
-	strength--;
+	lifes--;
 
-	if (strength == 0) {
-
+	if (lifes <= 0) {
+		death = true;
 	}
 }
 
-//void Ball::BuildTrajectory(int x, int y)
-//{
-//	int dx = abs(x - _x);
-//	int dy = abs(y - _y);
-//
-//	int error = dx - dy;
-//
-//	int X = _x;
-//	int Y = _y;
-//	int dirY = y - _y;
-//	int dirX = x - _x;
-//
-//	dirY = (dirY > 0) ? 1 : -1;
-//	dirX = (dirX > 0) ? 1 : -1;
-//
-//	while (X != x || Y != y)
-//	{
-//		traj.push_back(make_pair(X, Y));
-//		int error2 = error * 2;
-//		if (error2 > -dy) {
-//			error -= dy;
-//			X += dirX;
-//		}
-//		if (error2 < dx) {
-//			error += dx;
-//			Y += dirY;
-//		}
-//	}
-//}
+void Brick::BrickHit()
+{
+	strength--;
+
+	if (strength <= 0) {
+		death = true;
+		EraseObject();
+	}
+}
 
 void Ball::BallMove()
 {
 	EraseObject();
-	_x++;
-	_y--;
 
-	//if (traj.empty()) {
+	if (RIGHT_TOP) {
+		_x++;
+		_y--;
+	}
 
-	//}
+	if (LEFT_TOP) {
+		_x--;
+		_y--;
+	}
+
+	if (RIGHT_BOTTOM) {
+		_x++;
+		_y++;
+	}
+
+	if (LEFT_BOTTOM) {
+		_x--;
+		_y++;
+	}
+}
+
+void Ball::ChangeDirection()
+{
+	LEFT = _x - 1, TOP = _y - 1, RIGHT = _x + 1, BOT = _y + 1;
+
+	if (RIGHT_TOP && RIGHT == 150) {
+		RIGHT_TOP = 0;
+		LEFT_TOP = 1;
+	}
+
+	if (RIGHT_TOP && TOP == 0) {
+		RIGHT_TOP = 0;
+		RIGHT_BOTTOM = 1;
+	}
+
+	if (RIGHT_BOTTOM && RIGHT == 150) {
+		RIGHT_BOTTOM = 0;
+		LEFT_BOTTOM = 1;
+	}
+
+	if (LEFT_TOP && LEFT == 0) {
+		LEFT_TOP = 0;
+		RIGHT_TOP = 1;
+	}
+
+	if (LEFT_TOP && TOP == 0) {
+		LEFT_TOP = 0;
+		LEFT_BOTTOM = 1;
+	}
+
+	if (LEFT_BOTTOM && LEFT == 0) {
+		LEFT_BOTTOM = 0;
+		RIGHT_BOTTOM = 1;
+	}
 }

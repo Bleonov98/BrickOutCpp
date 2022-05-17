@@ -5,6 +5,7 @@ class GameObject
 {
 public:
 	int _width, _height, _x, _y;
+	bool death = false;
 	char _symbol;
 
 	GameObject(wd* wData, int width, int height, int x, int y, char symbol) {
@@ -37,6 +38,8 @@ public:
 	MyMortar(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
 
 	void MoveMyMortar();
+
+	void DeathMortar();
 };
 
 
@@ -47,17 +50,16 @@ public:
 class Ball : public GameObject 
 {
 public:
-	bool ballGo = false;
+
+	int LEFT = _x - 1, TOP = _y - 1, RIGHT = _x + 1, BOT = _y + 1;
+
+	bool RIGHT_TOP = 1, LEFT_TOP = 0, LEFT_BOTTOM = 0, RIGHT_BOTTOM = 0;
 
 	Ball(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
 
 	void BallMove();
 
-	//void BuildTrajectory(int x, int y);
-
-private:
-
-	//vector <pair<int, int>> traj;
+	void ChangeDirection();
 
 };
 
@@ -72,10 +74,16 @@ public:
 
 	Brick(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
 
-	void brickHit();
+	void BrickHit();
+
+	void BonusFireBall();
+
+	void BonusMortarSize();
+
+	void BonusLife();
 	
 private: 
 
-	int strength = rand() % 3;
+	int strength = 1;
 
 };

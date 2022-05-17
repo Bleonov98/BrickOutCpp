@@ -78,7 +78,7 @@ void World::RunWorld(bool& restart)
 		{ HotKeys(); }
 	);
 
-	int level = 0;
+	int level = 1;
 	int tick = 1;
 	score = 0;
 
@@ -93,7 +93,7 @@ void World::RunWorld(bool& restart)
 	{
 		for (int j = 0; j < COLS / 8; j++)
 		{
-			brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (3 * i), '#');
+			brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (4 * i), '#');
 			allKnownObjects.push_back(brick);
 			brickList.push_back(brick);
 		}
@@ -103,17 +103,130 @@ void World::RunWorld(bool& restart)
 	{
 		if (started)
 		{
-			//if (!ball->ballGo) {
-			//	ball->ballGo = true;
-			//	ball->BuildTrajectory(COLS, 11);
-			//}
-
-			if (tick % 2 == 0) {
-				ball->BallMove();
+			if (level <= 3) {
+				if (tick % 2 == 0) {
+					ball->BallMove();
+					ball->ChangeDirection();
+				}
 			}
+			else if (level > 3) {
+				ball->BallMove();
+				ball->ChangeDirection();
+			}
+
 			myMortar->MoveMyMortar();
 		}
 		// move and direction settings
+
+   		for (int i = 0; i < brickList.size(); i++)
+		{
+			bool collisionBreak = 0;
+			for (int height = 0; height < brickList[i]->_height; height++)
+			{
+				for (int width = 0; width < brickList[i]->_width; width++)
+				{
+					if ((ball->RIGHT == brickList[i]->_x + width) && (ball->_y == brickList[i]->_y + height)) {
+
+						if (ball->RIGHT_TOP) {
+							ball->RIGHT_TOP = 0;
+							ball->LEFT_TOP = 1;
+						}
+						else if (ball->RIGHT_BOTTOM) {
+							ball->RIGHT_BOTTOM = 0;
+							ball->LEFT_BOTTOM = 1;
+						}
+
+						brickList[i]->BrickHit();
+						brickList.erase(brickList.begin() + i);
+
+						collisionBreak = 1;
+						break;
+					}
+
+					else if ((ball->LEFT == brickList[i]->_x + width) && (ball->_y == brickList[i]->_y + height)) {
+
+						if (ball->LEFT_TOP) {
+							ball->LEFT_TOP = 0;
+							ball->RIGHT_TOP = 1;
+						}
+						else if (ball->LEFT_BOTTOM) {
+							ball->LEFT_BOTTOM = 0;
+							ball->RIGHT_BOTTOM = 1;
+						}
+
+						brickList[i]->BrickHit();
+						brickList.erase(brickList.begin() + i);
+
+						collisionBreak = 1;
+						break;
+					}
+					else if ((ball->_x == brickList[i]->_x + width) && (ball->TOP == brickList[i]->_y + height)) {
+												
+						if (ball->RIGHT_TOP) {
+							ball->RIGHT_TOP = 0;
+							ball->RIGHT_BOTTOM = 1;
+						}
+						else if (ball->LEFT_TOP) {
+							ball->LEFT_TOP = 0;
+							ball->LEFT_BOTTOM = 1;
+						}
+
+						brickList[i]->BrickHit();
+						brickList.erase(brickList.begin() + i);
+
+						collisionBreak = 1;
+						break;
+					}
+
+					else if ((ball->_x == brickList[i]->_x + width) && (ball->BOT == brickList[i]->_y + height)) {
+
+						if (ball->RIGHT_BOTTOM) {
+							ball->RIGHT_BOTTOM = 0;
+							ball->RIGHT_TOP = 1;
+						}
+						else if (ball->LEFT_BOTTOM) {
+							ball->LEFT_BOTTOM = 0;
+							ball->LEFT_TOP = 1;
+						}
+
+						brickList[i]->BrickHit();
+						brickList.erase(brickList.begin() + i);
+
+						collisionBreak = 1;
+						break;
+					}
+				}
+				if (collisionBreak) break;
+			}
+			if (collisionBreak) break;
+		}
+		// brick destroy settings and ball collision
+
+		for (int height = 0; height < myMortar->_height; height++)
+		{
+			for (int width = 0; width < myMortar->_width; width++)
+			{
+				if ((ball->_x == myMortar->_x + width) && (ball->BOT == myMortar->_y + height)) {
+					if (ball->RIGHT_BOTTOM) {
+						ball->RIGHT_BOTTOM = 0;
+						ball->RIGHT_TOP = 1;
+					}
+					else if (ball->LEFT_BOTTOM) {
+						ball->LEFT_BOTTOM = 0;
+						ball->LEFT_TOP = 1;
+					}
+				}
+			}
+		}
+		// myMortar collision 
+
+		for (int i = 0; i < allKnownObjects.size(); i++)
+		{
+			if (allKnownObjects[i]->death) {
+				allKnownObjects.erase(allKnownObjects.begin() + i);
+			}
+		}
+		// delete object from vect if obj destroyed
 
 		for (int i = 0; i < allKnownObjects.size(); i++)
 		{
@@ -138,11 +251,15 @@ void World::RunWorld(bool& restart)
 		// double buffering output function
 
 
-		Sleep(10);
+		Sleep(15);
 		tick++;
+
+		if (level == 6) {
+			worldIsRun = 0;
+		}
 	}
 
-	if (level == 10) {
+	if (level == 6) {
 		SetPos(65, 22);
 		cout << "CONGRATULATIONS! YOU WIN";
 	}
