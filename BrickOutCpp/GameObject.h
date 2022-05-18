@@ -34,12 +34,13 @@ class MyMortar : public GameObject
 {
 public:
 	int lifes = 3;
+	float speed = 2;
 
 	MyMortar(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
 
 	void MoveMyMortar();
 
-	void DeathMortar();
+	void DeathMortar(bool &worldIsRun);
 };
 
 
@@ -72,11 +73,19 @@ class Brick : public GameObject
 {
 public:
 
-	Brick(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
+	Brick(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {
+		if (strength == 1) {
+			_symbol = '-';
+		}
+		else if (strength == 2) {
+			_symbol = '=';
+		}
+		else if (strength == 3) {
+			_symbol = symbol;
+		}
+	};
 
-	void BrickHit();
-
-	void BonusFireBall();
+	void BrickHit(vector<Brick*> &brickList, int i);
 
 	void BonusMortarSize();
 
@@ -84,6 +93,6 @@ public:
 	
 private: 
 
-	int strength = 1;
+	int strength = 1 + rand() % 3;
 
 };

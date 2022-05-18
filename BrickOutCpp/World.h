@@ -11,7 +11,7 @@ private:
 
     bool worldIsRun = true, pause = false, started = false;
 
-    int score = 0;
+    int score = 0, level;
 
 	char prevBuf[ROWS][COLS]{ ' ' };
 	char coord[50];
@@ -117,6 +117,8 @@ public:
     void RunWorld(bool& restart);
 
     void HotKeys();
+
+    void DrawInfo();
 
 };
 

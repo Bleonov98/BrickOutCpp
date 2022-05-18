@@ -22,6 +22,14 @@ void World::HotKeys()
 	}
 }
 
+void World::DrawInfo()
+{
+	SetPos(17, 52);
+	cout << score;
+	SetPos(17, 53);
+	cout << level;
+}
+
 void World::DrawArea()
 {
 	// Set console code page to UTF-8 so console known how to interpret string data
@@ -78,9 +86,10 @@ void World::RunWorld(bool& restart)
 		{ HotKeys(); }
 	);
 
-	int level = 1;
-	int tick = 1;
+	level = 1;
 	score = 0;
+	int tick = 1;
+	
 
 	MyMortar* myMortar = new MyMortar(&wData, 13, 2, COLS / 2 - 6, ROWS - 9, '*');
 	Ball* ball = new Ball(&wData, 1, 1, myMortar->_x + myMortar->_width/2, myMortar->_y - 1, '@');
@@ -89,7 +98,7 @@ void World::RunWorld(bool& restart)
 	allKnownObjects.push_back(ball);
 
 	Brick* brick;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < COLS / 8; j++)
 		{
@@ -103,16 +112,32 @@ void World::RunWorld(bool& restart)
 	{
 		if (started)
 		{
-			if (level <= 3) {
-				if (tick % 2 == 0) {
-					ball->BallMove();
-					ball->ChangeDirection();
+			ball->BallMove();
+			ball->ChangeDirection();
+
+			if (ball->_y == ROWS - 6) {
+
+			myMortar->DeathMortar(worldIsRun);
+						
+			for (int height = 0; height < 4; height++) {
+
+				SetPos(42 + (10 * myMortar->lifes), 51 + height);
+
+				for (int width = 0; width < 5; width++) {
+					cout << " ";
 				}
 			}
-			else if (level > 3) {
-				ball->BallMove();
-				ball->ChangeDirection();
-			}
+
+			Sleep(2000);
+
+			ball->LEFT_BOTTOM = 0;
+			ball->LEFT_TOP = 0;
+			ball->RIGHT_TOP = 1;
+			ball->RIGHT_BOTTOM = 0;
+				
+			ball->_x = myMortar->_x + myMortar->_width / 2;
+			ball->_y = myMortar->_y - 1;
+						}
 
 			myMortar->MoveMyMortar();
 		}
@@ -136,8 +161,7 @@ void World::RunWorld(bool& restart)
 							ball->LEFT_BOTTOM = 1;
 						}
 
-						brickList[i]->BrickHit();
-						brickList.erase(brickList.begin() + i);
+						brickList[i]->BrickHit(brickList, i);
 
 						collisionBreak = 1;
 						break;
@@ -154,12 +178,12 @@ void World::RunWorld(bool& restart)
 							ball->RIGHT_BOTTOM = 1;
 						}
 
-						brickList[i]->BrickHit();
-						brickList.erase(brickList.begin() + i);
+						brickList[i]->BrickHit(brickList, i);
 
 						collisionBreak = 1;
 						break;
 					}
+
 					else if ((ball->_x == brickList[i]->_x + width) && (ball->TOP == brickList[i]->_y + height)) {
 												
 						if (ball->RIGHT_TOP) {
@@ -171,8 +195,7 @@ void World::RunWorld(bool& restart)
 							ball->LEFT_BOTTOM = 1;
 						}
 
-						brickList[i]->BrickHit();
-						brickList.erase(brickList.begin() + i);
+						brickList[i]->BrickHit(brickList, i);
 
 						collisionBreak = 1;
 						break;
@@ -189,8 +212,7 @@ void World::RunWorld(bool& restart)
 							ball->LEFT_TOP = 1;
 						}
 
-						brickList[i]->BrickHit();
-						brickList.erase(brickList.begin() + i);
+						brickList[i]->BrickHit(brickList, i);
 
 						collisionBreak = 1;
 						break;
@@ -198,7 +220,10 @@ void World::RunWorld(bool& restart)
 				}
 				if (collisionBreak) break;
 			}
-			if (collisionBreak) break;
+			if (collisionBreak) {
+				score += 30;
+				break;
+			}
 		}
 		// brick destroy settings and ball collision
 
@@ -250,8 +275,9 @@ void World::RunWorld(bool& restart)
 		memcpy(prevBuf, wData.vBuf, ROWS * COLS);
 		// double buffering output function
 
+		DrawInfo();
 
-		Sleep(15);
+		Sleep(30);
 		tick++;
 
 		if (level == 6) {
@@ -265,15 +291,15 @@ void World::RunWorld(bool& restart)
 	}
 	else {
 		SetPos(70, 22);
-		cout << "GAME OVER";
-		SetPos(68, 25);
-		cout << "LEVEL: " << level << "/10";
+		cout << "GAME OVER!";
+		SetPos(70, 25);
+		cout << "LEVEL: " << level << "/5";
 	}
 	SetPos(70, 24);
-	cout << "SCORE:" << score;
-	SetPos(65, 28);
+	cout << "SCORE: " << score;
+	SetPos(65, 27);
 	cout << "PRESS ENTER TO RESTART";
-	SetPos(65, 29);
+	SetPos(65, 28);
 	cout << "PRESS ESC TO EXIT";
 
 	bool pressed = false;

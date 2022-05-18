@@ -25,36 +25,42 @@ void GameObject::EraseObject()
 void MyMortar::MoveMyMortar()
 {
 	if (GetAsyncKeyState(VK_RIGHT)) {
-		if (_x <= 148 - _width) {
+		if (_x <= 149 - _width) {
 			EraseObject();
-			_x++;
+			_x += speed;
 		}
 	}
 	if (GetAsyncKeyState(VK_LEFT)) {
-		if (_x > 3) {
+		if (_x > 1) {
 			EraseObject();
-			_x--;
+			_x -= speed;
 		}
 	}
 }
 
-void MyMortar::DeathMortar()
+void MyMortar::DeathMortar(bool& worldIsRun)
 {
 	lifes--;
 
 	if (lifes <= 0) {
 		death = true;
+		worldIsRun = 0;
 	}
 }
 
-void Brick::BrickHit()
+void Brick::BrickHit(vector<Brick*> &brickList, int i)
 {
-	strength--;
+	this->strength--;
 
-	if (strength <= 0) {
+	if (this->strength == 0) {
 		death = true;
+		brickList.erase(brickList.begin() + i);
 		EraseObject();
 	}
+}
+
+void Brick::BonusFireBall()
+{
 }
 
 void Ball::BallMove()
