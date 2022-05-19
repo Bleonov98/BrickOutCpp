@@ -8,12 +8,14 @@ public:
 	bool death = false;
 	char _symbol;
 
+	GameObject() {};
+
 	GameObject(wd* wData, int width, int height, int x, int y, char symbol) {
 		_width = width, _height = height, _x = x, _y = y, _symbol = symbol;
 		_wData = wData;
 	};
 
-	void DrawObject();
+	virtual void DrawObject();
 
 	void EraseObject();
 
@@ -33,8 +35,7 @@ protected:
 class MyMortar : public GameObject 
 {
 public:
-	int lifes = 3;
-	float speed = 2;
+	int lifes = 3, speed = 2;
 
 	MyMortar(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
 
@@ -74,25 +75,26 @@ class Brick : public GameObject
 public:
 
 	Brick(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {
-		if (strength == 1) {
-			_symbol = '-';
-		}
-		else if (strength == 2) {
-			_symbol = '=';
-		}
-		else if (strength == 3) {
-			_symbol = symbol;
-		}
 	};
 
+	void DrawObject();
+
 	void BrickHit(vector<Brick*> &brickList, int i);
-
-	void BonusMortarSize();
-
-	void BonusLife();
 	
 private: 
 
 	int strength = 1 + rand() % 3;
 
+};
+
+
+class Bonus : public GameObject
+{
+public:
+
+	Bonus() {};
+
+	Bonus(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol){};
+
+	void BonusGo(vector<Bonus*> &bonusList, int i);
 };

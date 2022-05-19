@@ -1,4 +1,4 @@
-#include "World.h"
+﻿#include "World.h"
 
 void World::SetPos(int x, int y)
 {
@@ -91,8 +91,10 @@ void World::RunWorld(bool& restart)
 	int tick = 1;
 	
 
-	MyMortar* myMortar = new MyMortar(&wData, 13, 2, COLS / 2 - 6, ROWS - 9, '*');
+	MyMortar* myMortar = new MyMortar(&wData, 7, 2, COLS / 2 - 6, ROWS - 9, '*');
 	Ball* ball = new Ball(&wData, 1, 1, myMortar->_x + myMortar->_width/2, myMortar->_y - 1, '@');
+	Bonus* bonusLife = new Bonus;
+	Bonus* bonusSize = new Bonus;
 
 	allKnownObjects.push_back(myMortar);
 	allKnownObjects.push_back(ball);
@@ -112,6 +114,13 @@ void World::RunWorld(bool& restart)
 	{
 		if (started)
 		{
+			if (!bonusList.empty()) {
+				for (int i = 0; i < bonusList.size(); i++)
+				{
+					bonusList[i]->BonusGo(bonusList, i);
+				}
+			}
+
 			ball->BallMove();
 			ball->ChangeDirection();
 
@@ -119,11 +128,11 @@ void World::RunWorld(bool& restart)
 
 			myMortar->DeathMortar(worldIsRun);
 						
-			for (int height = 0; height < 4; height++) {
+			for (int Lifeheight = 0; Lifeheight < 4; Lifeheight++) {
 
-				SetPos(42 + (10 * myMortar->lifes), 51 + height);
+				SetPos(42 + (10 * myMortar->lifes), 51 + Lifeheight);
 
-				for (int width = 0; width < 5; width++) {
+				for (int Lifewidth = 0; Lifewidth < 5; Lifewidth++) {
 					cout << " ";
 				}
 			}
@@ -142,6 +151,65 @@ void World::RunWorld(bool& restart)
 			myMortar->MoveMyMortar();
 		}
 		// move and direction settings
+
+		// ------------------------------(1)
+		if (bonusList.empty()) {
+			if (score % 1200 == 0 && score > 0) {
+				int randBrickNum = rand() % brickList.size() - 1;
+				bonusLife = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, 'L');
+
+				bonusList.push_back(bonusLife);
+				allKnownObjects.push_back(bonusLife);
+			}
+
+			else if (score % 1500 == 0 && score > 0) {
+				int randBrickNum = rand() % brickList.size() - 1;
+				bonusSize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, 'S');
+
+				bonusList.push_back(bonusSize);
+				allKnownObjects.push_back(bonusSize);
+			}
+		}
+		//bonusLife && bonusSize settings(2)
+
+		if (!bonusList.empty()) {
+			for (int height = 0; height < myMortar->_height; height++)
+			{
+				for (int width = 0; width < myMortar->_width; width++)
+				{
+					if ((myMortar->_x + width == bonusLife->_x) && (myMortar->_y + height == bonusLife->_y) && (myMortar->lifes < 3)) {
+
+						if (myMortar->lifes == 1) {
+							SetPos(52, 51);
+							cout << "@@ @@";
+							SetPos(52, 52);
+							cout << "@ @ @";
+							SetPos(52, 53);
+							cout << " @ @ ";
+							SetPos(52, 54);
+							cout <<  " @ ";
+						}
+
+						if (myMortar->lifes == 2) {
+							SetPos(62, 51);
+							cout << "@@ @@";
+							SetPos(62, 52);
+							cout << "@ @ @";
+							SetPos(62, 53);
+							cout << " @ @ ";
+							SetPos(62, 54);
+							cout << " @ ";
+						}
+
+						myMortar->lifes++;
+					}
+					if ((myMortar->_x + width == bonusSize->_x) && (myMortar->_y + height == bonusSize->_y)) {
+						myMortar->_width += 2;
+					}
+				}
+			}
+		}
+		//Bonus collision and functional
 
    		for (int i = 0; i < brickList.size(); i++)
 		{
@@ -280,12 +348,12 @@ void World::RunWorld(bool& restart)
 		Sleep(30);
 		tick++;
 
-		if (level == 6) {
+		if (level == 3) {
 			worldIsRun = 0;
 		}
 	}
 
-	if (level == 6) {
+	if (level == 3) {
 		SetPos(65, 22);
 		cout << "CONGRATULATIONS! YOU WIN";
 	}
@@ -299,7 +367,7 @@ void World::RunWorld(bool& restart)
 	cout << "SCORE: " << score;
 	SetPos(65, 27);
 	cout << "PRESS ENTER TO RESTART";
-	SetPos(65, 28);
+	SetPos(68, 28);
 	cout << "PRESS ESC TO EXIT";
 
 	bool pressed = false;

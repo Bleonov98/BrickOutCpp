@@ -48,6 +48,27 @@ void MyMortar::DeathMortar(bool& worldIsRun)
 	}
 }
 
+void Brick::DrawObject()
+{
+	if (strength == 1) {
+		_symbol = '-';
+	}
+	else if (strength == 2) {
+		_symbol = '=';
+	}
+	else if (strength == 3) {
+		_symbol = '#';
+	}
+
+	for (int i = 0; i < _height; i++)
+	{
+		for (int j = 0; j < _width; j++)
+		{
+			_wData->vBuf[_y + i][_x + j] = _symbol;
+		}
+	}
+}
+
 void Brick::BrickHit(vector<Brick*> &brickList, int i)
 {
 	this->strength--;
@@ -57,10 +78,6 @@ void Brick::BrickHit(vector<Brick*> &brickList, int i)
 		brickList.erase(brickList.begin() + i);
 		EraseObject();
 	}
-}
-
-void Brick::BonusFireBall()
-{
 }
 
 void Ball::BallMove()
@@ -120,5 +137,17 @@ void Ball::ChangeDirection()
 	if (LEFT_BOTTOM && LEFT == 0) {
 		LEFT_BOTTOM = 0;
 		RIGHT_BOTTOM = 1;
+	}
+}
+
+void Bonus::BonusGo(vector<Bonus*>& bonusList, int i)
+{
+	EraseObject();
+	_y++;
+
+	if (_y == ROWS - 7) {
+		death = true;
+		bonusList.erase(bonusList.begin() + i);
+		EraseObject();
 	}
 }

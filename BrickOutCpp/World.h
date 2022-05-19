@@ -8,6 +8,7 @@ private:
 
     vector <GameObject*> allKnownObjects;
     vector <Brick*> brickList;
+    vector <Bonus*> bonusList;
 
     bool worldIsRun = true, pause = false, started = false;
 
