@@ -49,5 +49,29 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\BrickoutArea.txt" />
+    <Text Include="..\brickOutTitle.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\musTitle.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\collisionMortar.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\noDestroyCollision.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\collisionBrick.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\mortarDeath.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\bonusGo.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\bonusTaken.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

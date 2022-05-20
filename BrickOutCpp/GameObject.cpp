@@ -73,7 +73,12 @@ void Brick::BrickHit(vector<Brick*> &brickList, int i)
 {
 	this->strength--;
 
+	if (this->strength > 0) {
+		PlaySound(MAKEINTRESOURCE(IDR_WAVE3), NULL, SND_RESOURCE | SND_ASYNC);
+	}
+
 	if (this->strength == 0) {
+		PlaySound(MAKEINTRESOURCE(IDR_WAVE4), NULL, SND_RESOURCE | SND_ASYNC);
 		death = true;
 		brickList.erase(brickList.begin() + i);
 		EraseObject();
@@ -109,32 +114,32 @@ void Ball::ChangeDirection()
 {
 	LEFT = _x - 1, TOP = _y - 1, RIGHT = _x + 1, BOT = _y + 1;
 
-	if (RIGHT_TOP && RIGHT == 150) {
+	if (RIGHT_TOP && RIGHT >= 150) {
 		RIGHT_TOP = 0;
 		LEFT_TOP = 1;
 	}
 
-	if (RIGHT_TOP && TOP == 0) {
+	if (RIGHT_TOP && TOP <= 0) {
 		RIGHT_TOP = 0;
 		RIGHT_BOTTOM = 1;
 	}
 
-	if (RIGHT_BOTTOM && RIGHT == 150) {
+	if (RIGHT_BOTTOM && RIGHT >= 150) {
 		RIGHT_BOTTOM = 0;
 		LEFT_BOTTOM = 1;
 	}
 
-	if (LEFT_TOP && LEFT == 0) {
+	if (LEFT_TOP && LEFT <= 0) {
 		LEFT_TOP = 0;
 		RIGHT_TOP = 1;
 	}
 
-	if (LEFT_TOP && TOP == 0) {
+	if (LEFT_TOP && TOP <= 0) {
 		LEFT_TOP = 0;
 		LEFT_BOTTOM = 1;
 	}
 
-	if (LEFT_BOTTOM && LEFT == 0) {
+	if (LEFT_BOTTOM && LEFT <= 0) {
 		LEFT_BOTTOM = 0;
 		RIGHT_BOTTOM = 1;
 	}

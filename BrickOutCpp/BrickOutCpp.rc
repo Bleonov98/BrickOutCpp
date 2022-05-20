@@ -56,6 +56,44 @@ IDR_TEXT1               TEXT                    "C:\\Users\\Borys\\source\\repos
 /////////////////////////////////////////////////////////////////////////////
 
 
+/////////////////////////////////////////////////////////////////////////////
+// Ukrainian (Ukraine) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_UKR)
+LANGUAGE LANG_UKRAINIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXT
+//
+
+IDR_TEXT2               TEXT                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\brickOutTitle.txt"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// WAVE
+//
+
+IDR_WAVE1               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\musTitle.wav"
+
+IDR_WAVE2               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\collisionMortar.wav"
+
+IDR_WAVE3               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\noDestroyCollision.wav"
+
+IDR_WAVE4               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\collisionBrick.wav"
+
+IDR_WAVE5               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\mortarDeath.wav"
+
+IDR_WAVE6               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\bonusGo.wav"
+
+IDR_WAVE7               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\bonusTaken.wav"
+
+#endif    // Ukrainian (Ukraine) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

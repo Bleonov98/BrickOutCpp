@@ -111,6 +111,8 @@ public:
 
     void SetPos(int x, int y);
 
+    void DrawTitle();
+
     void DrawArea();
 
     void CreateWorld();

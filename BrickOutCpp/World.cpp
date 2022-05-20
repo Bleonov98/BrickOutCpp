@@ -12,6 +12,8 @@ void World::HotKeys()
 
 	started = true;
 
+	PlaySound(MAKEINTRESOURCE(IDR_WAVE2), NULL, SND_RESOURCE | SND_ASYNC);
+
 	while (worldIsRun) {
 		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
 			worldIsRun = false;
@@ -27,7 +29,57 @@ void World::DrawInfo()
 	SetPos(17, 52);
 	cout << score;
 	SetPos(17, 53);
-	cout << level;
+	cout << level + 1;
+}
+
+void World::DrawTitle() {
+
+	PlaySound(MAKEINTRESOURCE(IDR_WAVE1), NULL, SND_RESOURCE | SND_ASYNC);
+
+	HRSRC hResource = FindResource(hInstance, MAKEINTRESOURCE(IDR_TEXT2), L"TEXT");
+
+	if (hResource)
+	{
+		HGLOBAL hLoadedResource = LoadResource(hInstance, hResource);
+
+		if (hLoadedResource)
+		{
+			LPCSTR title = (LPCSTR)LockResource(hLoadedResource);
+
+			if (title)
+			{
+				DWORD dwResourceSize = SizeofResource(hInstance, hResource);
+
+				if (0 != dwResourceSize)
+				{
+					int j = 0;
+					int k = 1;
+					for (int i = 0; i < 55; i++)
+					{
+						for (; j < 151 * k; j++)
+						{
+							cout << title[j];
+						}
+						k++;
+						Sleep(20);
+					}
+				}
+			}
+		}
+	}
+
+	while (!GetAsyncKeyState(VK_RETURN)) {
+		SetPos(67, 42);
+		cout << "PRESS ENTER TO START";
+		Sleep(650);
+		SetPos(67, 42);
+		cout << "                    ";
+		Sleep(650);
+	}
+
+	PlaySound(NULL, 0, 0);
+
+	system("cls");
 }
 
 void World::DrawArea()
@@ -73,7 +125,7 @@ void World::CreateWorld() {
 	printf(CSI "?1049h"); // enable alt buffer
 	printf(CSI "?25l"); // hide cursor blinking
 
-	/*DrawTitle();*/
+	DrawTitle();
 	DrawArea();
 }
 
@@ -86,7 +138,7 @@ void World::RunWorld(bool& restart)
 		{ HotKeys(); }
 	);
 
-	level = 1;
+	level = 0;
 	score = 0;
 	int tick = 1;
 	
@@ -95,16 +147,17 @@ void World::RunWorld(bool& restart)
 	Ball* ball = new Ball(&wData, 1, 1, myMortar->_x + myMortar->_width/2, myMortar->_y - 1, '@');
 	Bonus* bonusLife = new Bonus;
 	Bonus* bonusSize = new Bonus;
+	Bonus* penaltySize = new Bonus;
 
 	allKnownObjects.push_back(myMortar);
 	allKnownObjects.push_back(ball);
 
 	Brick* brick;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < COLS / 8; j++)
 		{
-			brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (4 * i), '#');
+			brick = new Brick(&wData, 7, 2, 4 + (8 * j), 15 + (8 * i), '#');
 			allKnownObjects.push_back(brick);
 			brickList.push_back(brick);
 		}
@@ -137,6 +190,8 @@ void World::RunWorld(bool& restart)
 				}
 			}
 
+			PlaySound(MAKEINTRESOURCE(IDR_WAVE5), NULL, SND_RESOURCE | SND_ASYNC);
+
 			Sleep(2000);
 
 			ball->LEFT_BOTTOM = 0;
@@ -152,61 +207,168 @@ void World::RunWorld(bool& restart)
 		}
 		// move and direction settings
 
+		if (brickList.empty()) {
+			level++;
+
+			if (level == 1) {
+				for (int i = 0; i < 3; i++)
+				{
+					for (int j = 0; j < COLS / 8; j++)
+					{
+						brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (15 * i), '#');
+						allKnownObjects.push_back(brick);
+						brickList.push_back(brick);
+					}
+				}
+			}
+
+			else if (level == 2) {
+				for (int i = 0; i < 4; i++)
+				{
+					for (int j = 0; j < COLS / 8; j++)
+					{
+						brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (4 * i), '#');
+						allKnownObjects.push_back(brick);
+						brickList.push_back(brick);
+					}
+				}
+			}
+
+			else if (level == 3) {
+				break;
+			}
+		}
+
 		// ------------------------------(1)
 		if (bonusList.empty()) {
-			if (score % 1200 == 0 && score > 0) {
-				int randBrickNum = rand() % brickList.size() - 1;
+			if ((score % 1200 == 0) && (score > 0) && (myMortar->lifes <= 2)) {
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE6), NULL, SND_RESOURCE | SND_ASYNC);
+
+				int randBrickNum = rand() % (brickList.size() - 1);
+
 				bonusLife = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, 'L');
 
 				bonusList.push_back(bonusLife);
 				allKnownObjects.push_back(bonusLife);
+
+				score += 30;
 			}
 
-			else if (score % 1500 == 0 && score > 0) {
-				int randBrickNum = rand() % brickList.size() - 1;
-				bonusSize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, 'S');
+			if (score % 450 == 0 && score > 0) {
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE6), NULL, SND_RESOURCE | SND_ASYNC);
 
-				bonusList.push_back(bonusSize);
-				allKnownObjects.push_back(bonusSize);
+				if (myMortar->_width <= 15) {
+					int randBrickNum = rand() % (brickList.size() - 1);
+
+					bonusSize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, '+');
+
+					bonusList.push_back(bonusSize);
+					allKnownObjects.push_back(bonusSize);
+
+					score += 30;
+				}
+
+				else if (myMortar->_width > 15) {
+					int randBrickNum = rand() % (brickList.size() - 1);
+
+					penaltySize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, '-');
+
+					bonusList.push_back(penaltySize);
+					allKnownObjects.push_back(penaltySize);
+
+					score += 30;
+				}
 			}
 		}
 		//bonusLife && bonusSize settings(2)
 
 		if (!bonusList.empty()) {
-			for (int height = 0; height < myMortar->_height; height++)
-			{
-				for (int width = 0; width < myMortar->_width; width++)
-				{
-					if ((myMortar->_x + width == bonusLife->_x) && (myMortar->_y + height == bonusLife->_y) && (myMortar->lifes < 3)) {
 
-						if (myMortar->lifes == 1) {
-							SetPos(52, 51);
-							cout << "@@ @@";
-							SetPos(52, 52);
-							cout << "@ @ @";
-							SetPos(52, 53);
-							cout << " @ @ ";
-							SetPos(52, 54);
-							cout <<  " @ ";
+		bool breakBonus = false;
+
+			for (int height = 0; height < myMortar->_height; height++) {
+
+				for (int width = 0; width < myMortar->_width; width++) {
+
+					if ((myMortar->_x + width == bonusLife->_x) && (myMortar->_y + height == bonusLife->_y) && (myMortar->lifes < 3) && (!bonusLife->alreadyDone)) {
+
+						PlaySound(MAKEINTRESOURCE(IDR_WAVE7), NULL, SND_RESOURCE | SND_ASYNC);
+
+							if (myMortar->lifes == 1) {
+								SetPos(52, 51);
+								cout << "@@ @@";
+								SetPos(52, 52);
+								cout << "@ @ @";
+								SetPos(52, 53);
+								cout << " @ @ ";
+								SetPos(52, 54);
+								cout << "  @  ";
+
+								score += 30;
+								myMortar->lifes++;
+
+								bonusLife->death = 1;
+								bonusLife->alreadyDone = 1;
+
+								breakBonus = 1;
+								break;
+							}
+
+							else if (myMortar->lifes == 2) {
+								SetPos(62, 51);
+								cout << "@@ @@";
+								SetPos(62, 52);
+								cout << "@ @ @";
+								SetPos(62, 53);
+								cout << " @ @ ";
+								SetPos(62, 54);
+								cout << "  @  ";
+
+								score += 30;
+								myMortar->lifes++;
+
+								bonusLife->death = 1;
+								bonusLife->alreadyDone = 1;
+
+								breakBonus = 1;
+								break;
+							}
 						}
 
-						if (myMortar->lifes == 2) {
-							SetPos(62, 51);
-							cout << "@@ @@";
-							SetPos(62, 52);
-							cout << "@ @ @";
-							SetPos(62, 53);
-							cout << " @ @ ";
-							SetPos(62, 54);
-							cout << " @ ";
-						}
+					if ((myMortar->_x + width == bonusSize->_x) && (myMortar->_y + height == bonusSize->_y) && (!bonusSize->alreadyDone)) {
+						PlaySound(MAKEINTRESOURCE(IDR_WAVE7), NULL, SND_RESOURCE | SND_ASYNC);
 
-						myMortar->lifes++;
+						myMortar->_width += 1;
+
+						bonusSize->death = 1;
+						bonusSize->alreadyDone = 1;
+						bonusSize->EraseObject();
+
+						score += 30;
+
+						breakBonus = 1;
+						break;
 					}
-					if ((myMortar->_x + width == bonusSize->_x) && (myMortar->_y + height == bonusSize->_y)) {
-						myMortar->_width += 2;
+
+					if ((myMortar->_x + width == penaltySize->_x) && (myMortar->_y + height == penaltySize->_y) && (!penaltySize->alreadyDone)) {
+						PlaySound(MAKEINTRESOURCE(IDR_WAVE7), NULL, SND_RESOURCE | SND_ASYNC);
+
+						myMortar->EraseObject();
+						myMortar->_width -= 6;
+
+						penaltySize->death = 1;
+						penaltySize->alreadyDone = 1;
+						penaltySize->EraseObject();
+
+						score += 30;
+
+						breakBonus = 1;
+						break;
 					}
+				
+					if (breakBonus) break;
 				}
+				if (breakBonus) break;
 			}
 		}
 		//Bonus collision and functional
@@ -300,13 +462,19 @@ void World::RunWorld(bool& restart)
 			for (int width = 0; width < myMortar->_width; width++)
 			{
 				if ((ball->_x == myMortar->_x + width) && (ball->BOT == myMortar->_y + height)) {
+
 					if (ball->RIGHT_BOTTOM) {
 						ball->RIGHT_BOTTOM = 0;
 						ball->RIGHT_TOP = 1;
 					}
+
 					else if (ball->LEFT_BOTTOM) {
 						ball->LEFT_BOTTOM = 0;
 						ball->LEFT_TOP = 1;
+					}
+
+					if (started) {
+						PlaySound(MAKEINTRESOURCE(IDR_WAVE2), NULL, SND_RESOURCE | SND_ASYNC);
 					}
 				}
 			}
@@ -357,11 +525,12 @@ void World::RunWorld(bool& restart)
 		SetPos(65, 22);
 		cout << "CONGRATULATIONS! YOU WIN";
 	}
+
 	else {
 		SetPos(70, 22);
 		cout << "GAME OVER!";
 		SetPos(70, 25);
-		cout << "LEVEL: " << level << "/5";
+		cout << "LEVEL: " << level + 1 << "/3";
 	}
 	SetPos(70, 24);
 	cout << "SCORE: " << score;

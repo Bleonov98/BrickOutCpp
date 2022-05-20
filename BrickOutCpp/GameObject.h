@@ -48,7 +48,6 @@ public:
 
 
 
-
 class Ball : public GameObject 
 {
 public:
@@ -64,7 +63,6 @@ public:
 	void ChangeDirection();
 
 };
-
 
 
 
@@ -88,9 +86,14 @@ private:
 };
 
 
+
+
+
 class Bonus : public GameObject
 {
 public:
+
+	bool alreadyDone = false;
 
 	Bonus() {};
 
