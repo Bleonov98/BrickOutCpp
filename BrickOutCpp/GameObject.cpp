@@ -25,13 +25,13 @@ void GameObject::EraseObject()
 void MyMortar::MoveMyMortar()
 {
 	if (GetAsyncKeyState(VK_RIGHT)) {
-		if (_x <= 149 - _width) {
+		if (_x <= 147 - _width) {
 			EraseObject();
 			_x += speed;
 		}
 	}
 	if (GetAsyncKeyState(VK_LEFT)) {
-		if (_x > 1) {
+		if (_x > 3) {
 			EraseObject();
 			_x -= speed;
 		}
@@ -114,32 +114,32 @@ void Ball::ChangeDirection()
 {
 	LEFT = _x - 1, TOP = _y - 1, RIGHT = _x + 1, BOT = _y + 1;
 
-	if (RIGHT_TOP && RIGHT >= 150) {
+	if (RIGHT_TOP && RIGHT >= 149) {
 		RIGHT_TOP = 0;
 		LEFT_TOP = 1;
 	}
 
-	if (RIGHT_TOP && TOP <= 0) {
+	if (RIGHT_TOP && TOP <= 1) {
 		RIGHT_TOP = 0;
 		RIGHT_BOTTOM = 1;
 	}
 
-	if (RIGHT_BOTTOM && RIGHT >= 150) {
+	if (RIGHT_BOTTOM && RIGHT >= 149) {
 		RIGHT_BOTTOM = 0;
 		LEFT_BOTTOM = 1;
 	}
 
-	if (LEFT_TOP && LEFT <= 0) {
+	if (LEFT_TOP && LEFT <= 1) {
 		LEFT_TOP = 0;
 		RIGHT_TOP = 1;
 	}
 
-	if (LEFT_TOP && TOP <= 0) {
+	if (LEFT_TOP && TOP <= 1) {
 		LEFT_TOP = 0;
 		LEFT_BOTTOM = 1;
 	}
 
-	if (LEFT_BOTTOM && LEFT <= 0) {
+	if (LEFT_BOTTOM && LEFT <= 1) {
 		LEFT_BOTTOM = 0;
 		RIGHT_BOTTOM = 1;
 	}

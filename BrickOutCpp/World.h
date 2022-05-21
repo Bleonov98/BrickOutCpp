@@ -10,7 +10,9 @@ private:
     vector <Brick*> brickList;
     vector <Bonus*> bonusList;
 
-    bool worldIsRun = true, pause = false, started = false;
+    vector <pair<int, int>> colored;
+
+    bool worldIsRun = true, pause = false, stoped = false, started = false;
 
     int score = 0, level;
 
@@ -79,7 +81,7 @@ private:
         }
 
         void SetScreenSize() {
-            int Width = 150, Height = 56, err = 40;
+            int Width = 151, Height = 56, err = 40; // 150, 56
 
             COORD monitorSize = { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
             COORD bufferSize = { Width, Height };

@@ -8,19 +8,17 @@ void World::SetPos(int x, int y)
 
 void World::HotKeys()
 {
-	while (!GetKeyState(VK_SPACE)) {}
-
-	started = true;
-
-	PlaySound(MAKEINTRESOURCE(IDR_WAVE2), NULL, SND_RESOURCE | SND_ASYNC);
-
 	while (worldIsRun) {
 		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
 			worldIsRun = false;
 		}
-		if (GetAsyncKeyState(0x50)) {
+		if (GetKeyState(0x50)) {
 			pause = !pause;
 		}
+		if (GetAsyncKeyState(VK_SPACE)) {
+			started = true;
+		}
+		this_thread::sleep_for(milliseconds(10));
 	}
 }
 
@@ -56,7 +54,7 @@ void World::DrawTitle() {
 					int k = 1;
 					for (int i = 0; i < 55; i++)
 					{
-						for (; j < 151 * k; j++)
+						for (; j < 150.95 * k; j++)
 						{
 							cout << title[j];
 						}
@@ -106,7 +104,7 @@ void World::DrawArea()
 
 				if (0 != dwResourceSize)
 				{
-					for (int i = 0; i < strnlen(area, 8915); i++) {
+					for (int i = 0; i < strnlen(area, 9500); i++) {
 						std::cout << area[i];
 					}
 				}
@@ -160,11 +158,29 @@ void World::RunWorld(bool& restart)
 			brick = new Brick(&wData, 7, 2, 4 + (8 * j), 15 + (8 * i), '#');
 			allKnownObjects.push_back(brick);
 			brickList.push_back(brick);
+			
+			for (int height = 0; height < brickList[i]->_height; height++)
+			{
+				for (int width = 0; width < brickList[i]->_width; width++)
+				{
+					colored.push_back(make_pair(brickList[i]->_x + width, brickList[i]->_y + height));
+				}
+			}
 		}
 	}
 
 	while (worldIsRun)
 	{
+		if (pause) {
+			SetPos(COLS / 2, ROWS / 2);
+			cout << "PAUSED";
+			while (pause) {
+
+			}
+			SetPos(COLS / 2, ROWS / 2);
+			cout << "      ";
+		}
+
 		if (started)
 		{
 			if (!bonusList.empty()) {
@@ -201,13 +217,26 @@ void World::RunWorld(bool& restart)
 				
 			ball->_x = myMortar->_x + myMortar->_width / 2;
 			ball->_y = myMortar->_y - 1;
-						}
 
-			myMortar->MoveMyMortar();
+			started = false;
+			}
+		}
+
+		myMortar->MoveMyMortar();
+
+		if (!started) {
+			ball->EraseObject();
+			ball->_x = myMortar->_x + myMortar->_width / 2;
+			ball->_y = myMortar->_y - 1;
 		}
 		// move and direction settings
+		
 
 		if (brickList.empty()) {
+			ball->EraseObject();
+
+			started = false;
+
 			level++;
 
 			if (level == 1) {
@@ -240,7 +269,7 @@ void World::RunWorld(bool& restart)
 		}
 
 		// ------------------------------(1)
-		if (bonusList.empty()) {
+		if ((bonusList.empty()) && (!brickList.empty())) {
 			if ((score % 1200 == 0) && (score > 0) && (myMortar->lifes <= 2)) {
 				PlaySound(MAKEINTRESOURCE(IDR_WAVE6), NULL, SND_RESOURCE | SND_ASYNC);
 
@@ -495,6 +524,9 @@ void World::RunWorld(bool& restart)
 		}
 		// Draw all object
 
+		printf(ESC "(0"); 
+		printf(CSI "1;33m"); 
+
 		for (int y = 0; y < ROWS; y++)
 		{
 			for (int x = 0; x < COLS; x++)
@@ -508,7 +540,10 @@ void World::RunWorld(bool& restart)
 			}
 		}
 
-		memcpy(prevBuf, wData.vBuf, ROWS * COLS);
+		printf(CSI "0m");
+		printf(ESC "(B");
+
+		memcpy(prevBuf, wData.vBuf, ROWS* COLS);
 		// double buffering output function
 
 		DrawInfo();
@@ -540,6 +575,7 @@ void World::RunWorld(bool& restart)
 	cout << "PRESS ESC TO EXIT";
 
 	bool pressed = false;
+	restart = false;
 
 	do {
 		if (GetAsyncKeyState(VK_RETURN)) {
