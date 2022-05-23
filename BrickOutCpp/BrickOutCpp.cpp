@@ -2,7 +2,7 @@
 
 int main()
 {
-	bool restart;
+	bool restart = false;
 
 	do
 	{

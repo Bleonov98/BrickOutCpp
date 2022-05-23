@@ -6,7 +6,7 @@ void GameObject::DrawObject()
 	{
 		for (int j = 0; j < _width; j++)
 		{
-			_wData->vBuf[_y + i][_x + j] = _symbol;
+			_wData->vBuf[_y + i][_x + j] = _symbol | (_color << 8);
 		}
 	}
 }
@@ -51,20 +51,20 @@ void MyMortar::DeathMortar(bool& worldIsRun)
 void Brick::DrawObject()
 {
 	if (strength == 1) {
-		_symbol = '-';
+		_symbol = u'-';
 	}
 	else if (strength == 2) {
-		_symbol = '=';
+		_symbol = u'=';
 	}
 	else if (strength == 3) {
-		_symbol = '#';
+		_symbol = u'#';
 	}
 
 	for (int i = 0; i < _height; i++)
 	{
 		for (int j = 0; j < _width; j++)
 		{
-			_wData->vBuf[_y + i][_x + j] = _symbol;
+			_wData->vBuf[_y + i][_x + j] = _symbol | (_color << 8);
 		}
 	}
 }

@@ -12,11 +12,12 @@ private:
 
     vector <pair<int, int>> colored;
 
-    bool worldIsRun = true, pause = false, stoped = false, started = false;
+    bool worldIsRun = true, pause = false, stoped = false, started = false, pressed = false;
 
     int score = 0, level;
 
-	char prevBuf[ROWS][COLS]{ ' ' };
+	char16_t prevBuf[ROWS][COLS];
+
 	char coord[50];
 
     HINSTANCE hInstance;
@@ -107,7 +108,7 @@ private:
 
     };
 
-    VirtualTerminal term; // console setting
+     VirtualTerminal term; // console setting
 
 public:
 

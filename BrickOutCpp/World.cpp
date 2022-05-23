@@ -105,7 +105,7 @@ void World::DrawArea()
 				if (0 != dwResourceSize)
 				{
 					for (int i = 0; i < strnlen(area, 9500); i++) {
-						std::cout << area[i];
+						cout << area[i];
 					}
 				}
 			}
@@ -117,7 +117,7 @@ void World::DrawArea()
 
 void World::CreateWorld() {
 
-	term.Terminal();  // Set virtual terminal settings
+	// term.Terminal();  // Set virtual terminal settings
 	term.SetScreenSize();
 
 	printf(CSI "?1049h"); // enable alt buffer
@@ -140,9 +140,8 @@ void World::RunWorld(bool& restart)
 	score = 0;
 	int tick = 1;
 	
-
-	MyMortar* myMortar = new MyMortar(&wData, 7, 2, COLS / 2 - 6, ROWS - 9, '*');
-	Ball* ball = new Ball(&wData, 1, 1, myMortar->_x + myMortar->_width/2, myMortar->_y - 1, '@');
+	MyMortar* myMortar = new MyMortar(&wData, 7, 2, COLS / 2 - 6, ROWS - 9, FOREGROUND_GREEN | FOREGROUND_RED, u'*');
+	Ball* ball = new Ball(&wData, 1, 1, myMortar->_x + myMortar->_width/2, myMortar->_y - 1, FOREGROUND_RED, u'@');
 	Bonus* bonusLife = new Bonus;
 	Bonus* bonusSize = new Bonus;
 	Bonus* penaltySize = new Bonus;
@@ -155,17 +154,9 @@ void World::RunWorld(bool& restart)
 	{
 		for (int j = 0; j < COLS / 8; j++)
 		{
-			brick = new Brick(&wData, 7, 2, 4 + (8 * j), 15 + (8 * i), '#');
+			brick = new Brick(&wData, 7, 2, 4 + (8 * j), 15 + (8 * i), FOREGROUND_GREEN, u'#');
 			allKnownObjects.push_back(brick);
 			brickList.push_back(brick);
-			
-			for (int height = 0; height < brickList[i]->_height; height++)
-			{
-				for (int width = 0; width < brickList[i]->_width; width++)
-				{
-					colored.push_back(make_pair(brickList[i]->_x + width, brickList[i]->_y + height));
-				}
-			}
 		}
 	}
 
@@ -244,7 +235,7 @@ void World::RunWorld(bool& restart)
 				{
 					for (int j = 0; j < COLS / 8; j++)
 					{
-						brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (15 * i), '#');
+						brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (15 * i), FOREGROUND_GREEN, '#');
 						allKnownObjects.push_back(brick);
 						brickList.push_back(brick);
 					}
@@ -256,7 +247,7 @@ void World::RunWorld(bool& restart)
 				{
 					for (int j = 0; j < COLS / 8; j++)
 					{
-						brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (4 * i), '#');
+						brick = new Brick(&wData, 7, 2, 4 + (8 * j), 2 + (4 * i), FOREGROUND_GREEN, '#');
 						allKnownObjects.push_back(brick);
 						brickList.push_back(brick);
 					}
@@ -275,7 +266,7 @@ void World::RunWorld(bool& restart)
 
 				int randBrickNum = rand() % (brickList.size() - 1);
 
-				bonusLife = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, 'L');
+				bonusLife = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, FOREGROUND_RED, 'L');
 
 				bonusList.push_back(bonusLife);
 				allKnownObjects.push_back(bonusLife);
@@ -289,7 +280,7 @@ void World::RunWorld(bool& restart)
 				if (myMortar->_width <= 15) {
 					int randBrickNum = rand() % (brickList.size() - 1);
 
-					bonusSize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, '+');
+					bonusSize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, FOREGROUND_RED, '+');
 
 					bonusList.push_back(bonusSize);
 					allKnownObjects.push_back(bonusSize);
@@ -300,7 +291,7 @@ void World::RunWorld(bool& restart)
 				else if (myMortar->_width > 15) {
 					int randBrickNum = rand() % (brickList.size() - 1);
 
-					penaltySize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, '-');
+					penaltySize = new Bonus(&wData, 1, 1, brickList[randBrickNum]->_x + brickList[randBrickNum]->_width / 2, brickList[randBrickNum]->_y + 2, FOREGROUND_RED, '-');
 
 					bonusList.push_back(penaltySize);
 					allKnownObjects.push_back(penaltySize);
@@ -524,26 +515,40 @@ void World::RunWorld(bool& restart)
 		}
 		// Draw all object
 
-		printf(ESC "(0"); 
-		printf(CSI "1;33m"); 
-
 		for (int y = 0; y < ROWS; y++)
 		{
 			for (int x = 0; x < COLS; x++)
 			{
-				if (prevBuf[y][x] == wData.vBuf[y][x])
+				if (prevBuf[y][x] != wData.vBuf[y][x])
 				{
-					continue;
+					COORD coord;
+
+					coord.X = x;
+					coord.Y = y;
+
+					prevBuf[y][x] = wData.vBuf[y][x];
+
+					SetPos(x, y);
+
+					if ((prevBuf[y][x] >> 8) == FOREGROUND_GREEN) {
+						printf(CSI "22;32m");
+					}
+					else if ((prevBuf[y][x] >> 8) == FOREGROUND_RED) {
+						printf(CSI "22;31m");
+					}
+					else if ((prevBuf[y][x] >> 8) == (FOREGROUND_RED | FOREGROUND_GREEN)) {
+						printf(CSI "22;33m");
+					}
+					/*else if ((prevBuf[y][x] >> 8) == () {
+						printf(CSI "22;31m");
+					}*/
+
+					cout << char(prevBuf[y][x]);
+
+					printf(CSI "1;0m");
 				}
-				SetPos(x, y);
-				cout << wData.vBuf[y][x];
 			}
 		}
-
-		printf(CSI "0m");
-		printf(ESC "(B");
-
-		memcpy(prevBuf, wData.vBuf, ROWS* COLS);
 		// double buffering output function
 
 		DrawInfo();
@@ -574,10 +579,10 @@ void World::RunWorld(bool& restart)
 	SetPos(68, 28);
 	cout << "PRESS ESC TO EXIT";
 
-	bool pressed = false;
+	pressed = false;
 	restart = false;
 
-	do {
+	while (!pressed) {
 		if (GetAsyncKeyState(VK_RETURN)) {
 			restart = true;
 			pressed = true;
@@ -586,9 +591,9 @@ void World::RunWorld(bool& restart)
 			restart = false;
 			pressed = true;
 		}
-	} while (!pressed);
+	}
 
 	hotKeys.join();
 
-	printf(CSI "?1049l"); // enable main buffer
+	printf(CSI "?1049l"); 
 }

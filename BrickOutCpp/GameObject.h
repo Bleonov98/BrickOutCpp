@@ -4,14 +4,14 @@
 class GameObject
 {
 public:
-	int _width, _height, _x, _y;
+	int _width, _height, _x, _y, _color;
 	bool death = false;
-	char _symbol;
+	char16_t _symbol;
 
 	GameObject() {};
 
-	GameObject(wd* wData, int width, int height, int x, int y, char symbol) {
-		_width = width, _height = height, _x = x, _y = y, _symbol = symbol;
+	GameObject(wd* wData, int width, int height, int x, int y, int color, char16_t symbol) {
+		_width = width, _height = height, _x = x, _y = y, _symbol = symbol, _color = color;
 		_wData = wData;
 	};
 
@@ -35,13 +35,16 @@ protected:
 class MyMortar : public GameObject 
 {
 public:
+
 	int lifes = 3, speed = 2;
 
-	MyMortar(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
+	MyMortar(wd* wData, int width, int height, int x, int y, int color, char16_t symbol) : GameObject(wData, width, height, x, y, color, symbol) {
+	};
 
 	void MoveMyMortar();
 
 	void DeathMortar(bool &worldIsRun);
+
 };
 
 
@@ -56,7 +59,7 @@ public:
 
 	bool RIGHT_TOP = 1, LEFT_TOP = 0, LEFT_BOTTOM = 0, RIGHT_BOTTOM = 0;
 
-	Ball(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {};
+	Ball(wd* wData, int width, int height, int x, int y, int color, char16_t symbol) : GameObject(wData, width, height, x, y, color, symbol) {};
 
 	void BallMove();
 
@@ -72,7 +75,7 @@ class Brick : public GameObject
 {
 public:
 
-	Brick(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol) {
+	Brick(wd* wData, int width, int height, int x, int y, int color, char16_t symbol) : GameObject(wData, width, height, x, y, color, symbol) {
 	};
 
 	void DrawObject();
@@ -97,7 +100,7 @@ public:
 
 	Bonus() {};
 
-	Bonus(wd* wData, int width, int height, int x, int y, char symbol) : GameObject(wData, width, height, x, y, symbol){};
+	Bonus(wd* wData, int width, int height, int x, int y, int color, char16_t symbol) : GameObject(wData, width, height, x, y, color, symbol) {};
 
 	void BonusGo(vector<Bonus*> &bonusList, int i);
 };

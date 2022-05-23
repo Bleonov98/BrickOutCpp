@@ -7,5 +7,5 @@
 typedef struct wd {
 	int size_rows;
 	int size_cols;
-	unsigned char vBuf[ROWS][COLS]{' '};
+	char16_t vBuf[ROWS][COLS]{' '};
 } WD;
