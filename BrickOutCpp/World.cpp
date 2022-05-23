@@ -117,7 +117,7 @@ void World::DrawArea()
 
 void World::CreateWorld() {
 
-	// term.Terminal();  // Set virtual terminal settings
+	term.Terminal();  // Set virtual terminal settings
 	term.SetScreenSize();
 
 	printf(CSI "?1049h"); // enable alt buffer
