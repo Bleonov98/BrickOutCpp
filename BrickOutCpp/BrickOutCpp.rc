@@ -50,7 +50,7 @@ END
 // TEXT
 //
 
-IDR_TEXT1               TEXT                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\BrickoutArea.txt"
+IDR_TEXT1               TEXT                    "..\\BrickoutArea.txt"
 
 #endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ LANGUAGE LANG_UKRAINIAN, SUBLANG_DEFAULT
 // TEXT
 //
 
-IDR_TEXT2               TEXT                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\brickOutTitle.txt"
+IDR_TEXT2               TEXT                    "..\\brickOutTitle.txt"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,19 +76,19 @@ IDR_TEXT2               TEXT                    "C:\\Users\\Borys\\source\\repos
 // WAVE
 //
 
-IDR_WAVE1               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\musTitle.wav"
+IDR_WAVE1               WAVE                    "..\\musTitle.wav"
 
-IDR_WAVE2               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\collisionMortar.wav"
+IDR_WAVE2               WAVE                    "..\\collisionMortar.wav"
 
-IDR_WAVE3               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\noDestroyCollision.wav"
+IDR_WAVE3               WAVE                    "..\\noDestroyCollision.wav"
 
-IDR_WAVE4               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\collisionBrick.wav"
+IDR_WAVE4               WAVE                    "..\\collisionBrick.wav"
 
-IDR_WAVE5               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\mortarDeath.wav"
+IDR_WAVE5               WAVE                    "..\\mortarDeath.wav"
 
-IDR_WAVE6               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\bonusGo.wav"
+IDR_WAVE6               WAVE                    "..\\bonusGo.wav"
 
-IDR_WAVE7               WAVE                    "C:\\Users\\Borys\\source\\repos\\BrickOutCpp\\bonusTaken.wav"
+IDR_WAVE7               WAVE                    "..\\bonusTaken.wav"
 
 #endif    // Ukrainian (Ukraine) resources
 /////////////////////////////////////////////////////////////////////////////
