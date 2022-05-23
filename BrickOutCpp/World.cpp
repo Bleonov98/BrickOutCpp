@@ -515,9 +515,9 @@ void World::RunWorld(bool& restart)
 		}
 		// Draw all object
 
-		for (int y = 0; y < ROWS; y++)
+		for (int y = 1; y < ROWS; y++)
 		{
-			for (int x = 0; x < COLS; x++)
+			for (int x = 1; x < COLS; x++)
 			{
 				if (prevBuf[y][x] != wData.vBuf[y][x])
 				{
